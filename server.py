@@ -29,9 +29,15 @@ class helloHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
             print(data['text'])
-            messages.append(data['text'])
-            ruta['messages'] = messages
-            self.wfile.write(json.dumps(ruta).encode())
+            self.wfile.write(json.dumps({
+                'method': self.command,
+                'path': self.path,
+                'real_path': parsed_path.query,
+                'query': parsed_path.query,
+                'request_version': self.request_version,
+                'protocol_version': self.protocol_version,
+                'body': data
+            }).encode())
             return
 
         except:
