@@ -4,7 +4,7 @@ import sys
 import json
 import urllib.parse
 import threading
-import subprocess
+
 
 ruta = {}
 messages = ['Hola', 'Pero hpta']
@@ -29,6 +29,9 @@ class helloHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
             print(data['text'])
+            if not messages[len(messages)-1] == data['text']:
+                messages.append(data['text'])
+                ruta['messages'] = messages
             self.wfile.write(json.dumps({
                 'method': self.command,
                 'path': self.path,
