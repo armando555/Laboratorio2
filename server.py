@@ -29,7 +29,7 @@ class helloHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
             print(data['text'])
-            if not messages[len(messages)-1] == data['text']:
+            if not messages[len(messages)-1] == data['text'] and data['text'] != '':
                 messages.append(data['text'])
                 ruta['messages'] = messages
             self.wfile.write(json.dumps({
