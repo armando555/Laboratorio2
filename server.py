@@ -7,7 +7,7 @@ import threading
 
 
 ruta = {}
-messages = ['Hola', 'Pero hpta']
+messages = [('System','Escribe tu mensaje')]
 ruta['messages'] = messages
 
 
@@ -18,20 +18,27 @@ class helloHandler(BaseHTTPRequestHandler):
         self.end_headers()
         jsonFile = json.dumps(ruta)
         self.wfile.write(jsonFile.encode())
+        
+
 
     def do_POST(self):
         try:
             content_len = int(self.headers.get('content-length'))
             post_body = self.rfile.read(content_len)
             data = json.loads(post_body)
+            print(data['user'])
+            print(data['text'])
+
 
             parsed_path = urllib.parse.urlparse(self.path)
             self.send_response(200)
             self.end_headers()
-            print(data['text'])
-            if not messages[len(messages)-1] == data['text'] and data['text'] != '':
-                messages.append(data['text'])
+            
+
+            if not messages[len(messages)-1][0] == data['text'] and data['text'] != '':
+                messages.append((data['user'],data['text']))
                 ruta['messages'] = messages
+
             self.wfile.write(json.dumps({
                 'method': self.command,
                 'path': self.path,
@@ -39,7 +46,7 @@ class helloHandler(BaseHTTPRequestHandler):
                 'query': parsed_path.query,
                 'request_version': self.request_version,
                 'protocol_version': self.protocol_version,
-                'body': data
+                'body': data['text']
             }).encode())
             return
 
